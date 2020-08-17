@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <title>转账</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="panel panel-info" style="margin-top:50px;">
+                <div class="panel-heading">
+                    <h3>转账</h3>
+                    <h5>
+                        <p>用户：<span id='username'></span></p>
+                        <p>余额：<span id='account'></span></p>
+                    </h5>
+                </div>
+                <div class="panel-body">
+                    <form onsubmit="return false">
+                        <div class="form-group">
+                            <label for="payee">收款人</label>
+                            <input class="form-control" type="text" id="payee" />
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">金额</label>
+                            <input class="form-control" type="text" id="amount" />
+                        </div>
+                        <div id="svg"></div>
+                        <div class="form-group">
+                            <label for="code">验证码</label>
+                            <input class="form-control" type="text" id="code" />
+                        </div>
+                        <div class="form-group">
+                            <input class="btn btn-primary" type="submit" id="transfer" value="转账" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<!-- <script src="/node_modules/jquery/dist/jquery.js"></script> -->
+<script>
+
+    $(document).ready(function () {
+        function getUserInfo() {
+            $.get('/api/userinfo').then(res => {
+                if (res.code === 1) {
+                    location.href = '/login.html';
+                } else {
+                    let { username, account,svg } = res.info;
+                    $('#username').text(username);
+                    $('#account').text(account);
+                    // $('#svg').html(svg)
+                }
+            });
+        }
+        getUserInfo();
+
+        $('#transfer').click(function () {
+            let payee = $('#payee').val(); //收款人
+            let amount = $('#amount').val(); //转账金融
+            let code = $('#svg').val()
+            /**
+             * 省略了用户名/密码的合规性检查
+             */
+
+            //  let token = document.cookie.match(/connect.sid=([^;]*)/) || [];
+            $.post('/api/transfer1', {
+                payee,
+                amount,
+                // code,
+                // token: 'mytoken_' + token[1]
+            }).then((res) => {
+                if (res.code === 0) {
+                    //重新获取用户信息
+                    getUserInfo();
+                } else {
+                    //失败
+                    // location.href = `/login.html`;
+                }
+            });
+        });
+    });
+</script>
+
+</html>
